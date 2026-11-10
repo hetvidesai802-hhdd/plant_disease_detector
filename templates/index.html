@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LeafCare · Plant Disease Detector</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div class="brand-mark">✿</div>
+      <p class="eyebrow">AI-POWERED PLANT HEALTH</p>
+      <h1>Give your plants<br><em>a healthier tomorrow.</em></h1>
+      <p class="intro">Upload a clear photo of a single leaf. The model will identify the most likely condition.</p>
+    </header>
+
+    <section class="card">
+      <form method="post" enctype="multipart/form-data">
+        <label class="dropzone" for="leaf_image">
+          <span class="leaf-icon">🌿</span>
+          <strong>Choose a leaf photo</strong>
+          <span>JPG, PNG or WEBP · up to 8 MB</span>
+          <input id="leaf_image" name="leaf_image" type="file" accept="image/png,image/jpeg,image/webp" required>
+        </label>
+        <p id="filename" class="filename">No image selected</p>
+        <button type="submit">Analyse leaf <span>→</span></button>
+      </form>
+
+      {% if error %}<div class="message error">{{ error }}</div>{% endif %}
+      {% if prediction %}
+      <div class="result">
+        <p class="eyebrow">ANALYSIS RESULT</p>
+        <h2>{{ prediction.disease }}</h2>
+        <p class="crop">{{ prediction.crop }}</p>
+        <div class="confidence-row"><span>Model confidence</span><strong>{{ prediction.confidence }}%</strong></div>
+        <div class="bar"><span style="width: {{ prediction.confidence }}%"></span></div>
+        <p class="status {% if prediction.healthy %}good{% else %}caution{% endif %}">
+          {% if prediction.healthy %}This leaf was classified as healthy.{% else %}Possible disease detected. Consider checking with an agricultural expert.{% endif %}
+        </p>
+        <p class="disclaimer">This is an AI prediction, not a definitive diagnosis. Results may be less reliable for field photos or diseases outside the training dataset.</p>
+      </div>
+      {% endif %}
+    </section>
+    <footer>LEAFCARE · A MACHINE LEARNING PROJECT</footer>
+  </main>
+  <script>
+    document.getElementById("leaf_image").addEventListener("change", function () {
+      document.getElementById("filename").textContent =
+        this.files.length ? this.files[0].name : "No image selected";
+    });
+  </script>
+</body>
+</html>
